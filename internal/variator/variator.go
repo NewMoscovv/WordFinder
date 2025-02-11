@@ -1,15 +1,25 @@
 package variator
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 )
 
-func SetFileType(fileType string) {
+func SetFileType() (string, error) {
+
+	var fileType string
+
+	_, err := fmt.Scan(&fileType)
+	if err != nil {
+		return "", err
+	}
+
 	fileType = strings.ToLower(fileType)
 
 	switch fileType {
 	case "excel":
-		// here is not logic.
-		// -- pls implement me!
+		return fileType, nil
 	}
+	return "", errors.New("invalid file type")
 }

@@ -1,18 +1,29 @@
 package excel
 
 import (
-	lg "Excel_word_checker/pkg/logger"
+	"bufio"
 	"fmt"
 	"github.com/xuri/excelize/v2"
+	"os"
+	"strings"
 )
 
 type Excel struct {
 	file *excelize.File
 }
 
-func New(fileName string) (*Excel, error) {
+func New() (*Excel, error) {
+	reader := bufio.NewReader(os.Stdin)
+
+	fileName, err := reader.ReadString('\r')
+	fileName = strings.TrimSpace(fileName)
+	if err != nil {
+		return nil, err
+	}
 
 	file, err := excelize.OpenFile(fileName)
+	defer file.Close()
+
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +31,7 @@ func New(fileName string) (*Excel, error) {
 	return &Excel{file}, nil
 }
 
-func (e *Excel) GetSheetList(logger lg.Logger) {
+func (e *Excel) GetSheetList() string {
 	var sheetString string
 
 	sheetList := e.file.GetSheetList()
@@ -33,10 +44,10 @@ func (e *Excel) GetSheetList(logger lg.Logger) {
 		}
 	}
 
-	logger.Info.Printf("Обнаружено %d страниц: %s. Выберите какой лист необходимо просканировать.\n"+
-		"Для этого необходимо написать название листа или \"ВСЕ\" для сканирования всех листов",
+	result := fmt.Sprintf("Обнаружено %d страниц: %s. Выберите какой лист необходимо просканировать.\n"+
+		"Для этого необходимо написать название листа или \"ВСЕ\" для сканирования всех листов\n",
 		len(sheetList), sheetString)
-
+	return result
 }
 
 func (e *Excel) FindWord(word string) (string, error) {
