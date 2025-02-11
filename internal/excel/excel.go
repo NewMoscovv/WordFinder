@@ -1,11 +1,21 @@
 package excel
 
+import (
+	"github.com/xuri/excelize/v2"
+)
+
 type Excel struct {
-	fileName string
+	fileName *excelize.File
 }
 
-func New(fileName string) *Excel {
-	return &Excel{fileName: fileName}
+func New(fileName string) (*Excel, error) {
+
+	file, err := excelize.OpenFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Excel{file}, nil
 }
 
 func (e *Excel) FindWord(word string) (string, error) {
