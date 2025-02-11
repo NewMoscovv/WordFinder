@@ -1,7 +1,6 @@
 package finder
 
 type Finder interface {
-	OpenFile(filename string) error
-	FindWord(word string) (int, error)
+	FindWord(word string) (string, error)
 	FindWords(words []string) ([]string, error)
 }
