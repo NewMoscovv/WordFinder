@@ -1,11 +1,13 @@
 package main
 
 import (
+	fndr "Excel_word_checker/internal/finder"
 	"Excel_word_checker/internal/variator"
 	lg "Excel_word_checker/pkg/logger"
 )
 
 func main() {
+	var finder fndr.Finder
 
 	logger := lg.Init()
 	logger.Info.Print("Добро пожаловать! Я помогу найти Вам слова в различных файлах.\n" +
@@ -17,9 +19,14 @@ func main() {
 	if err != nil {
 		logger.Info.Print(err.Error())
 	}
+
 	switch fileType {
 	case "excel":
-		variator.ExcelLogic(logger)
+		finder = variator.ExcelLogic(logger)
 	}
 
+	_, err = finder.FindWord("o")
+	if err != nil {
+		logger.Info.Print(err.Error())
+	}
 }
