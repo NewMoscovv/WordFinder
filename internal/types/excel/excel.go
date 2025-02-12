@@ -63,11 +63,15 @@ func (e *Excel) SetSheet() error {
 	}
 
 	sheetList := e.file.GetSheetList()
+	if chosenSheet == "все" {
+		e.sheet = "все"
+	} else {
+		for _, sheet := range sheetList {
 
-	for _, sheet := range sheetList {
-		if sheet == strings.ToLower(chosenSheet) || sheet == strings.ToLower("все") {
-			e.sheet = sheet
-			break
+			if strings.ToLower(sheet) == strings.ToLower(chosenSheet) {
+				e.sheet = sheet
+				break
+			}
 		}
 	}
 
@@ -79,6 +83,23 @@ func (e *Excel) SetSheet() error {
 }
 
 func (e *Excel) FindWord(word string) (string, error) {
-	return "", nil
+
+	if e.sheet != "все" {
+		rows, err := e.file.GetRows(e.sheet)
+		if err != nil {
+			return "", err
+		}
+
+		for row, _ := range rows {
+			for _, cell := range rows[row] {
+				if strings.Contains(cell, word) {
+					fmt.Print(cell)
+				}
+			}
+		}
+
+	}
+
+	return word, nil
 
 }
