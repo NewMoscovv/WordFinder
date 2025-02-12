@@ -2,6 +2,7 @@ package excel
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"github.com/xuri/excelize/v2"
 	"os"
@@ -9,7 +10,8 @@ import (
 )
 
 type Excel struct {
-	file *excelize.File
+	file  *excelize.File
+	sheet string
 }
 
 func New() (*Excel, error) {
@@ -28,7 +30,7 @@ func New() (*Excel, error) {
 		return nil, err
 	}
 
-	return &Excel{file}, nil
+	return &Excel{file, ""}, nil
 }
 
 func (e *Excel) GetSheetList() string {
@@ -47,13 +49,36 @@ func (e *Excel) GetSheetList() string {
 	result := fmt.Sprintf("Обнаружено %d страниц: %s. Выберите какой лист необходимо просканировать.\n"+
 		"Для этого необходимо написать название листа или \"ВСЕ\" для сканирования всех листов\n",
 		len(sheetList), sheetString)
+
 	return result
 }
 
-func (e *Excel) FindWord(word string) (string, error) {
-	return word, nil
+func (e *Excel) SetSheet() error {
+	var chosenSheet string
+
+	_, err := fmt.Scan(&chosenSheet)
+	if err != nil {
+		e.sheet = chosenSheet
+		return err
+	}
+
+	sheetList := e.file.GetSheetList()
+
+	for _, sheet := range sheetList {
+		if sheet == strings.ToLower(chosenSheet) || sheet == strings.ToLower("все") {
+			e.sheet = sheet
+			break
+		}
+	}
+
+	if e.sheet == "" {
+		return errors.New("такого листа нету в списке")
+	}
+
+	return nil
 }
 
-func (e *Excel) FindWords(words []string) ([]string, error) {
-	return words, nil
+func (e *Excel) FindWord(word string) (string, error) {
+	return "", nil
+
 }

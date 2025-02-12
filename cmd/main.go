@@ -22,11 +22,9 @@ func main() {
 
 	switch fileType {
 	case "excel":
-		finder = variator.ExcelLogic(logger)
+		finder = variator.ExcelOptions(logger)
 	}
 
 	_, err = finder.FindWord("o")
-	if err != nil {
-		logger.Info.Print(err.Error())
-	}
+
 }
